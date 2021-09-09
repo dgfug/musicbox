@@ -151,7 +151,7 @@ echo export PATH="$PATH" >> ~/.bashrc
 echo "and execute: start"
 echo ""
 sleep 1s
-echo "To disabe HDMI audio, add the following to the /boot/config.txt file"
+echo "To disable HDMI audio, add the following to the /boot/config.txt file"
 echo ""
 echo "dtoverlay=disable-hdmi-audio"
 echo -e "${FIN}"
