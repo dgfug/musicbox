@@ -1,0 +1,5 @@
+#!/bin/bash
+echo Closing out Patiobar ...
+pkill -xf "SCREEN -S pianobar -d -m bash -c pianobar"
+pkill -xf "node index.js patiobar"
+echo Done.

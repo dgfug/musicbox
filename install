@@ -1,0 +1,203 @@
+#!/bin/bash
+RED="\e[1;31m"
+GRN="\e[1;32m"
+PNK="\e[1;35m"
+WHT="\e[1;37m"
+YLW="\e[1;33m"
+FIN="\e[0m"
+
+DEPENDS="alsa-utils python3 python3-setuptools libssl-dev liblzo2-2 python3-pyaudio \
+	python-dbus libcurl4-openssl-dev libgcrypt20-dev libgcrypt20 libjson-c-dev \
+	libavfilter-dev npm libao4 libao-common screen pulseaudio python-pexpect \
+	pulseaudio-module-bluetooth bluetooth bluez bluez-tools libao-dev git gettext \
+	autopoint autoconf automake pkg-config libtool device-tree-compiler libell0"
+
+echo_nok(){
+echo -e -n "${PNK}[${FIN}${GRN}OK${FIN}${PNK}]${FIN}"
+}
+
+echo_focal(){
+echo -e -n "${PNK}[${FIN}${GRN}Ubuntu Focal${FIN}${PNK}]${FIN}"
+}
+
+echo_fail(){
+echo -n -e "${PNK}[${FIN}${RED}failed${FIN}${PNK}]${FIN}"
+}
+
+ierror(){
+echo
+echo -e "${WHT}Please check your internet connection and try again${FIN}."
+}
+
+derror(){
+echo
+echo -e "${WHT}The OS you are running is not supported${FIN}."
+}
+
+internet_check(){
+echo -e -n "${WHT}Checking Internet Connection:${FIN} "
+if [[ `wget -S --spider https://github.com 2>&1 | grep 'HTTP/1.1 200 OK'` ]]; then
+	echo_nok
+	echo "";
+else
+	echo_fail
+	echo ""
+	ierror
+	exit;
+fi
+}
+
+distro_check(){
+echo -e -n "${WHT}Checking Host Machine:${FIN} "
+sleep 1s
+if [[ `grep -w "focal" "/etc/os-release"` ]]; then
+	echo_focal
+	echo ""
+else
+	echo_fail
+	echo ""
+	derror
+	exit;
+fi
+}
+
+install_pianobar(){
+echo "Installing Pianobar ..."
+git clone https://github.com/PromyLOPh/pianobar.git
+cd pianobar
+make -j4
+sudo make install
+cd ..
+sudo rm -fdr pianobar
+}
+
+install_patiobar(){
+echo "Installing Patiobar ..."
+git clone https://github.com/pyavitz/Patiobar.git
+cd Patiobar
+./install.sh
+cd ..
+sudo rm -fdr Patiobar
+mkdir -p ~/bin
+cp -fr bin/* ~/bin
+}
+
+audio_setup(){
+sudo rm -f /etc/libao.conf
+sudo tee /etc/libao.conf <<EOF
+default_driver=alsa
+buffer_time=1300
+quiet
+EOF
+sudo cp -f audio/pulseaudio.init /etc/init.d/pulseaudio
+sudo chmod 755 /etc/init.d/pulseaudio
+sudo update-rc.d pulseaudio defaults
+sudo rm -f /usr/share/pulseaudio/alsa-mixer/profile-sets/default.conf
+sudo cp -f audio/default.conf /usr/share/pulseaudio/alsa-mixer/profile-sets/
+sudo chown root:root /usr/share/pulseaudio/alsa-mixer/profile-sets/default.conf
+sudo chown root:root /etc/libao.conf
+}
+
+autopair_service(){
+sudo sed -i '/#Name = BlueZ/a Enable=Source,Sink,Media' /etc/bluetooth/main.conf
+sudo sed -i 's/#Class = 0x000100/Class = 0x00041C/g' /etc/bluetooth/main.conf
+sudo sed -i 's/#DiscoverableTimeout = 0/DiscoverableTimeout = 0/g' /etc/bluetooth/main.conf
+sudo sed -i 's/#PairableTimeout = 0/PairableTimeout = 0/g' /etc/bluetooth/main.conf
+sudo sed -i 's/; resample-method = speex-float-1/resample-method = trivial/g' /etc/pulse/daemon.conf
+sudo mkdir -p /usr/local/bin
+sudo cp -f {auto-agent,autopair,bluezutils.py,bluezutils.pyc,BtAutoPair.py,BtAutoPair.pyc,testAutoPair.py} /usr/local/bin/
+sudo chmod +x /usr/local/bin/auto-agent
+sudo chmod +x /usr/local/bin/autopair
+sudo chown -R root:root /usr/local/bin/
+sudo tee /etc/systemd/system/autopair.service <<EOF
+[Unit]
+Description=Auto Pair
+Requires=bluetooth.service
+After=bluetooth.service
+Before=rc-local.service
+ConditionPathExists=/usr/local/bin/autopair
+
+[Service]
+ExecStart=/usr/local/bin/autopair > /dev/null 2>&1
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+EOF
+sudo systemctl enable autopair
+}
+
+# Disable HDMI Audio Overlay
+audio_overlay(){
+sudo mkdir -p /etc/initramfs/post-update.d/
+sudo cp -f audio/98-overlay /etc/initramfs/post-update.d/
+sudo chmod +x /etc/initramfs/post-update.d/98-overlay
+sudo chown root:root /etc/initramfs/post-update.d/98-overlay
+sudo /etc/initramfs/post-update.d/98-overlay
+}
+
+finish(){
+sleep 1s
+echo "Pianobar Setup"
+echo "Edit the following file ~/.config/pianobar/config"
+echo ""
+cat ~/.config/pianobar/config
+echo ""
+echo export PATH="$PATH" >> ~/.bashrc
+echo "and execute: start"
+echo ""
+sleep 1s
+echo "Bluetooth Setup"
+echo "Add the following to the /boot/config.txt file"
+echo ""
+echo "# disable hdmi audio"
+echo "dtoverlay=disable-hdmi-audio"
+echo ""
+echo "and reboot"
+}
+
+echo ""
+internet_check
+distro_check
+echo ""
+
+if [ -e /usr/bin/make ]; then
+	echo -e "${WHT}Starting install ...${FIN}"
+	sleep 2s
+	sudo apt update
+	sudo apt upgrade -y
+	sudo apt install -y ${DEPENDS}
+	echo ""
+	install_pianobar
+	echo ""
+	install_patiobar
+	echo ""
+	echo "Running bluetooth and audio setup .."
+	audio_setup > /dev/null 2>&1
+	autopair_service > /dev/null 2>&1
+	audio_overlay
+	echo "Done."
+	echo
+	finish
+	exit;
+else
+	echo -e "${WHT}Starting install ...${FIN}"
+	sleep 2s
+	sudo apt update
+	sudo apt upgrade -y
+	sudo apt install -y make
+	sudo apt install -y ${DEPENDS}
+	echo ""
+	install_pianobar
+	echo ""
+	install_patiobar
+	echo ""
+	echo "Running bluetooth and audio setup .."
+	audio_setup > /dev/null 2>&1
+	autopair_service > /dev/null 2>&1
+	audio_overlay
+	echo "Done."
+	echo
+	finish
+	exit;
+fi

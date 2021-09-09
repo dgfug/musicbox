@@ -1,0 +1,5 @@
+#!/bin/bash
+
+if [ -e /usr/local/bin/testAutoPair.py ]; then
+python /usr/local/bin/testAutoPair.py
+fi
