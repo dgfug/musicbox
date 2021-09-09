@@ -109,7 +109,7 @@ sudo sed -i 's/#DiscoverableTimeout = 0/DiscoverableTimeout = 0/g' /etc/bluetoot
 sudo sed -i 's/#PairableTimeout = 0/PairableTimeout = 0/g' /etc/bluetooth/main.conf
 sudo sed -i 's/; resample-method = speex-float-1/resample-method = trivial/g' /etc/pulse/daemon.conf
 sudo mkdir -p /usr/local/bin
-sudo cp -f {auto-agent,autopair,bluezutils.py,bluezutils.pyc,BtAutoPair.py,BtAutoPair.pyc,testAutoPair.py} /usr/local/bin/
+sudo cp -f autopair/{auto-agent,autopair,bluezutils.py,bluezutils.pyc,BtAutoPair.py,BtAutoPair.pyc,testAutoPair.py} /usr/local/bin/
 sudo chmod +x /usr/local/bin/auto-agent
 sudo chmod +x /usr/local/bin/autopair
 sudo chown -R root:root /usr/local/bin/
