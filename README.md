@@ -13,6 +13,7 @@ All images used were built with the following builder: https://github.com/pyavit
 * Bluez
 
 **Recommends:**
+* Dongle ... Bluetooth (low energy)
 * SSH Button ... [Android App](https://play.google.com/store/apps/details?id=com.pd7l.sshbutton&hl=en_US)
 * Amp Modules ... [PAM8403](https://www.amazon.com/PAM8403-Channel-Digital-Amplifier-Potentionmeter/dp/B01MYTZGYM) [PAM8406](https://www.ebay.com/itm/Amplifier-Board-Class-D-Audio-5W-5W-Module-Dual-Channel-PAM8406-DIY-Stereo-Mini/313153265326?_trkparms=aid%3D777001%26algo%3DDISCO.FEED%26ao%3D1%26asc%3D225074%26meid%3D56ccad57a0b3470196bc7664442aad56%26pid%3D100651%26rk%3D1%26rkt%3D1%26mehot%3Dnone%26itm%3D313153265326%26pmt%3D1%26noa%3D1%26pg%3D2380057%26algv%3DPersonalizedTopicsRefactor%26brand%3D&_trksid=p2380057.c100651.m4497&_trkparms=pageci%3A7e3b7455-d363-11ea-ac52-ae0bcbae8747%7Cparentrq%3Aa65578871730a45e5bf83bf0ffd9ca44%7Ciid%3A1)
 
@@ -68,7 +69,7 @@ The following [link](https://raspberry-valley.azurewebsites.net/Map-Bluetooth-Co
 
 ---
 
-**The boards that are currently supported**
+**Boards tested on**
 * Raspberry Pi 4B
 * Raspberry Pi 2/3/A/B/+
 * [Raspberry Pi Hardware](https://www.raspberrypi.org/documentation/hardware/raspberrypi)
