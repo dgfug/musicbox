@@ -61,6 +61,7 @@ else
 fi
 }
 
+# Install Pianobar
 install_pianobar(){
 echo "Installing Pianobar ..."
 git clone https://github.com/PromyLOPh/pianobar.git
@@ -71,17 +72,18 @@ cd ..
 sudo rm -fdr pianobar
 }
 
+# Install Patiobar
 install_patiobar(){
 echo "Installing Patiobar ..."
 git clone https://github.com/pyavitz/Patiobar.git
 cd Patiobar
 ./install.sh
 cd ..
-sudo rm -fdr Patiobar
 mkdir -p ~/bin
 cp -fr bin/* ~/bin
 }
 
+# Audio setup
 audio_setup(){
 sudo rm -f /etc/libao.conf
 sudo tee /etc/libao.conf <<EOF
@@ -98,6 +100,7 @@ sudo chown root:root /usr/share/pulseaudio/alsa-mixer/profile-sets/default.conf
 sudo chown root:root /etc/libao.conf
 }
 
+# Bluetooth auto pair setup
 autopair_service(){
 sudo sed -i '/#Name = BlueZ/a Enable=Source,Sink,Media' /etc/bluetooth/main.conf
 sudo sed -i 's/#Class = 0x000100/Class = 0x00041C/g' /etc/bluetooth/main.conf
@@ -147,7 +150,7 @@ echo export PATH="$PATH" >> ~/.bashrc
 echo "and execute: start"
 echo ""
 sleep 1s
-echo "Bluetooth Setup"
+echo "Disable HDMI audio"
 echo "Add the following to the /boot/config.txt file"
 echo ""
 echo "# disable hdmi audio"
