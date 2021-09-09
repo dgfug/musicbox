@@ -3,9 +3,14 @@
 
 All images used were built with the following builder: https://github.com/pyavitz/rpi-img-builder
 
----
+**Boards:**
+* Raspberry Pi 4B
+* Raspberry Pi 2/3/A/B/+
+* [Raspberry Pi Hardware](https://www.raspberrypi.org/documentation/hardware/raspberrypi)
 
 *Target Device:* `Raspberry Pi 3A+`
+
+---
 
 **Applications:**
 * Pianobar ... [Console client](https://github.com/PromyLOPh/pianobar)
@@ -69,7 +74,26 @@ The following [link](https://raspberry-valley.azurewebsites.net/Map-Bluetooth-Co
 
 ---
 
-**Boards tested on**
-* Raspberry Pi 4B
-* Raspberry Pi 2/3/A/B/+
-* [Raspberry Pi Hardware](https://www.raspberrypi.org/documentation/hardware/raspberrypi)
+**In the case of using a `USB Sound Card Adaptor` this is my following setup.**
+```sh
+cat /etc/asound.conf
+pcm.!default {
+        type hw
+        card 1
+}
+
+ctl.!default {
+        type hw           
+        card 1
+}
+```
+**Make sure to disable the onboard audio.**
+```sh
+nano /boot/config.txt
+# enable audio (loads snd_bcm2835)
+#dtparam=audio=on
+```
+```sh
+nano /etc/modules
+#snd_bcm2835
+```
