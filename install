@@ -142,7 +142,7 @@ sudo /etc/initramfs/post-update.d/98-overlay
 
 finish(){
 sleep 1s
-echo "Pianobar Setup"
+echo -e "${WHT}Pianobar Setup"
 echo "Edit the following file ~/.config/pianobar/config"
 echo ""
 cat ~/.config/pianobar/config
@@ -154,7 +154,7 @@ sleep 1s
 echo "To disabe HDMI audio, add the following to the /boot/config.txt file"
 echo ""
 echo "dtoverlay=disable-hdmi-audio"
-echo ""
+echo -e "${FIN}"
 cd ~
 sudo rm -fdr ~/musicbox
 }
@@ -178,7 +178,7 @@ if [ -e /usr/bin/make ]; then
 	echo "Running bluetooth and audio setup .."
 	audio_setup > /dev/null 2>&1
 	autopair_service > /dev/null 2>&1
-	audio_overlay
+	audio_overlay > /dev/null 2>&1
 	echo "Done."
 	echo
 	finish
