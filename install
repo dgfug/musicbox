@@ -10,7 +10,7 @@ DEPENDS="alsa-utils python3 python3-setuptools libssl-dev liblzo2-2 python3-pyau
 	python-dbus libcurl4-openssl-dev libgcrypt20-dev libgcrypt20 libjson-c-dev \
 	libavfilter-dev npm libao4 libao-common screen pulseaudio python-pexpect \
 	pulseaudio-module-bluetooth bluetooth bluez bluez-tools libao-dev git gettext \
-	autopoint autoconf automake pkg-config libtool device-tree-compiler libell0"
+	autopoint autoconf automake pkg-config libtool device-tree-compiler libell0 gcc-9"
 
 echo_nok(){
 echo -e -n "${PNK}[${FIN}${GRN}OK${FIN}${PNK}]${FIN}"
@@ -66,7 +66,7 @@ install_pianobar(){
 echo "Installing Pianobar ..."
 git clone https://github.com/PromyLOPh/pianobar.git
 cd pianobar
-make -j4
+make -j4 CC=/usr/bin/gcc-9
 sudo make install
 cd ..
 sudo rm -fdr pianobar
@@ -75,10 +75,11 @@ sudo rm -fdr pianobar
 # Install Patiobar
 install_patiobar(){
 echo "Installing Patiobar ..."
+cd ~
 git clone https://github.com/pyavitz/Patiobar.git
 cd Patiobar
 ./install.sh
-cd ..
+cd ~/musicbox
 mkdir -p ~/bin
 cp -fr bin/* ~/bin
 }
@@ -150,13 +151,12 @@ echo export PATH="$PATH" >> ~/.bashrc
 echo "and execute: start"
 echo ""
 sleep 1s
-echo "Disable HDMI audio"
-echo "Add the following to the /boot/config.txt file"
+echo "To disabe HDMI audio, add the following to the /boot/config.txt file"
 echo ""
-echo "# disable hdmi audio"
 echo "dtoverlay=disable-hdmi-audio"
 echo ""
-echo "and reboot"
+cd ~
+sudo rm -fdr ~/musicbox
 }
 
 echo ""
@@ -195,10 +195,10 @@ else
 	echo ""
 	install_patiobar
 	echo ""
-	echo "Running bluetooth and audio setup .."
+	echo "Running bluetooth and audio setup ..."
 	audio_setup > /dev/null 2>&1
 	autopair_service > /dev/null 2>&1
-	audio_overlay
+	audio_overlay > /dev/null 2>&1
 	echo "Done."
 	echo
 	finish
