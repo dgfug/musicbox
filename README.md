@@ -26,6 +26,7 @@ The `install` script was tested on images built with the [rpi-img-builder](https
 Create keygen: ssh-keygen
 Copy to target device: ssh-copy-id user@ipaddress
 ```
+Add to host device:
 ```sh
 nano ~/.ssh/config
 Host musicbox
@@ -68,8 +69,9 @@ echo >> ~/.bashrc
 echo "# Musicbox" >> ~/.bashrc
 echo "source  ~/.config/musicbox" >> ~/.bashrc
 ```
-Add a radio station: `sudo apt install -y mplayer`
+Add a radio station by installing `mplayer` on target device: `sudo apt install -y mplayer`
 ```sh
+# Example
 nano ~/.config/musicbox
 isla(){		# isla negra
 ssh musicbox 'mplayer -nocache -prefer-ipv4 http://66.228.60.216:8002/stream'
