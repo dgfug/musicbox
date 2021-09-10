@@ -68,6 +68,13 @@ ssh musicbox '~/bin/unmute'
 nano ~/.bashrc
 source  ~/.config/musicbox
 ```
+Add a radio station: `sudo apt install -y mplayer`
+```sh
+nano ~/.config/musicbox
+isla(){		# isla negra
+ssh musicbox 'mplayer -nocache -prefer-ipv4 http://66.228.60.216:8002/stream'
+}
+```
 You can also map a bluetooth remote or controller and use the `~/bin/scripts` to control the Pi / Pianobar.
 The following [link](https://raspberry-valley.azurewebsites.net/Map-Bluetooth-Controller-using-Python/) explains the basics.
 
