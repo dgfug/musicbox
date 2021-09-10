@@ -35,7 +35,7 @@ Host musicbox
         ForwardX11 no
 ```
 ```sh
-nano ~/.config/musicbox
+tee ~/.config/musicbox <<EOF
 start(){
 ssh musicbox '~/bin/start'
 }
@@ -63,10 +63,10 @@ ssh musicbox '~/bin/mute'
 unmute(){
 ssh musicbox '~/bin/unmute'
 }
-```
-```sh
-nano ~/.bashrc
-source  ~/.config/musicbox
+EOF
+echo >> ~/.bashrc
+echo "# Musicbox" >> ~/.bashrc
+echo "source  ~/.config/musicbox" >> ~/.bashrc
 ```
 Add a radio station: `sudo apt install -y mplayer`
 ```sh
