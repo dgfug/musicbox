@@ -133,11 +133,13 @@ sudo systemctl enable autopair
 
 # Disable HDMI Audio Overlay
 audio_overlay(){
-sudo mkdir -p /etc/initramfs/post-update.d/
-sudo cp -f audio/98-overlay /etc/initramfs/post-update.d/
-sudo chmod +x /etc/initramfs/post-update.d/98-overlay
-sudo chown root:root /etc/initramfs/post-update.d/98-overlay
-sudo /etc/initramfs/post-update.d/98-overlay
+if [[ `sudo dmesg | grep -w "Raspberry\ Pi"` ]]; then
+	sudo mkdir -p /etc/initramfs/post-update.d/
+	sudo cp -f audio/98-overlay /etc/initramfs/post-update.d/
+	sudo chmod +x /etc/initramfs/post-update.d/98-overlay
+	sudo chown root:root /etc/initramfs/post-update.d/98-overlay
+	sudo /etc/initramfs/post-update.d/98-overlay
+fi
 }
 
 finish(){
@@ -151,9 +153,11 @@ echo export PATH="$PATH" >> ~/.bashrc
 echo "and execute: start"
 echo ""
 sleep 1s
-echo "To disable HDMI audio, add the following to the /boot/config.txt file"
-echo ""
-echo "dtoverlay=disable-hdmi-audio"
+if [[ `sudo dmesg | grep -w "Raspberry\ Pi"` ]]; then
+	echo "To disable HDMI audio, add the following to the /boot/config.txt file"
+	echo ""
+	echo "dtoverlay=disable-hdmi-audio"
+fi
 echo -e "${FIN}"
 cd ~
 sudo rm -fdr ~/musicbox
