@@ -129,6 +129,7 @@ RemainAfterExit=yes
 WantedBy=multi-user.target
 EOF
 sudo systemctl enable autopair
+sudo systemctl start autopair
 }
 
 # Disable HDMI Audio Overlay
