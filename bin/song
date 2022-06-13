@@ -1,7 +1,7 @@
 #!/bin/bash
-RED="\e[1;31m"
+COL="\e[1;37m"
 FIN="\e[0m"
-echo -e ${RED}
+echo -e ${COL}
 awk -F\, '{printf $1" - "$4}' ~/.config/pianobar/currentSong
 echo -e ${FIN}
 echo ""
