@@ -169,43 +169,27 @@ internet_check
 distro_check
 echo ""
 
-if [ -e /usr/bin/make ]; then
-	echo -e "${WHT}Starting install ...${FIN}"
-	sleep 2s
-	sudo apt update
-	sudo apt upgrade -y
-	sudo apt install -y ${DEPENDS}
-	echo ""
-	install_pianobar
-	echo ""
-	install_patiobar
-	echo ""
-	echo "Running bluetooth and audio setup .."
-	audio_setup > /dev/null 2>&1
-	autopair_service > /dev/null 2>&1
-	audio_overlay > /dev/null 2>&1
-	echo "Done."
-	echo
-	finish
-	exit;
+echo -e "${WHT}Starting install ...${FIN}"
+sleep 2s
+sudo apt update
+sudo apt upgrade -y
+if [[ `command -v make` ]]; then
+	:;
 else
-	echo -e "${WHT}Starting install ...${FIN}"
-	sleep 2s
-	sudo apt update
-	sudo apt upgrade -y
-	sudo apt install -y make
-	sudo apt install -y ${DEPENDS}
-	echo ""
-	install_pianobar
-	echo ""
-	install_patiobar
-	echo ""
-	echo "Running bluetooth and audio setup ..."
-	audio_setup > /dev/null 2>&1
-	autopair_service > /dev/null 2>&1
-	audio_overlay > /dev/null 2>&1
-	echo "Done."
-	echo
-	finish
-	exit;
+	sudo apt install -y make;
 fi
+sudo apt install -y ${DEPENDS}
+echo ""
+install_pianobar
+echo ""
+install_patiobar
+echo ""
+echo "Running bluetooth and audio setup ..."
+audio_setup > /dev/null 2>&1
+autopair_service > /dev/null 2>&1
+audio_overlay > /dev/null 2>&1
+echo "Done."
+echo ""
+finish
+exit 0
+
