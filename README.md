@@ -1,7 +1,7 @@
 ### Pandora Music Player / Bluetooth Audio Receiver
 **Ubuntu Focal (Arm/Arm64)**
 
-The `install` script was tested on [images](https://github.com/pyavitz/binary/releases/tag/images) built with the [rpi-img-builder](https://github.com/pyavitz/rpi-img-builder). I can't say with any certainty, it will work with an official Ubuntu Focal release.
+The `install` script was tested on [images](https://github.com/pyavitz/rpi-img-builder/releases/tag/image) built with the [rpi-img-builder](https://github.com/pyavitz/rpi-img-builder). I can't say with any certainty, it will work with an official Ubuntu Focal release.
 
 **Boards:**
 * Raspberry Pi 2/3/4/A/B/+
