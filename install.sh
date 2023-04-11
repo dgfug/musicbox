@@ -1,11 +1,5 @@
 #!/bin/bash
 
-export LANG=$LANG:C
-if [[ $EUID -ne 0 ]]; then
-	$0 $@ 
-	exit
-fi
-
 RELEASE=`cat /etc/os-release | grep -w VERSION_CODENAME | sed 's/VERSION_CODENAME=//g'`
 RED="\e[1;31m"
 GRN="\e[1;32m"
@@ -75,9 +69,9 @@ echo "Installing Pianobar ..."
 git clone https://github.com/PromyLOPh/pianobar.git
 cd pianobar
 make -j4 CC=/usr/bin/gcc-9
-make install
+sudo make install
 cd ..
-rm -fdr pianobar
+sudo rm -fdr pianobar
 }
 
 # Install Patiobar
@@ -94,60 +88,58 @@ cp -fr bin/* ~/bin
 
 # Audio setup
 audio_setup(){
-rm -f /etc/libao.conf
-tee /etc/libao.conf <<EOF
+sudo rm -f /etc/libao.conf
+sudo tee /etc/libao.conf <<EOF
 default_driver=alsa
 buffer_time=1300
 quiet
 EOF
-cp -f audio/pulseaudio.init /etc/init.d/pulseaudio
-chmod 755 /etc/init.d/pulseaudio
-update-rc.d pulseaudio defaults
-rm -f /usr/share/pulseaudio/alsa-mixer/profile-sets/default.conf
-cp -f audio/default.conf /usr/share/pulseaudio/alsa-mixer/profile-sets/
-chown root:root /usr/share/pulseaudio/alsa-mixer/profile-sets/default.conf
-chown root:root /etc/libao.conf
+sudo cp -f audio/pulseaudio.init /etc/init.d/pulseaudio
+sudo chmod 755 /etc/init.d/pulseaudio
+sudo update-rc.d pulseaudio defaults
+sudo rm -f /usr/share/pulseaudio/alsa-mixer/profile-sets/default.conf
+sudo cp -f audio/default.conf /usr/share/pulseaudio/alsa-mixer/profile-sets/
+sudo chown root:root /usr/share/pulseaudio/alsa-mixer/profile-sets/default.conf
+sudo chown root:root /etc/libao.conf
 }
 
 # Bluetooth auto pair setup
 autopair_service(){
-sed -i '/#Name = BlueZ/a Enable=Source,Sink,Media' /etc/bluetooth/main.conf
-sed -i 's/#Class = 0x000100/Class = 0x00041C/g' /etc/bluetooth/main.conf
-sed -i 's/#DiscoverableTimeout = 0/DiscoverableTimeout = 0/g' /etc/bluetooth/main.conf
-sed -i 's/#PairableTimeout = 0/PairableTimeout = 0/g' /etc/bluetooth/main.conf
-sed -i 's/; resample-method = speex-float-1/resample-method = trivial/g' /etc/pulse/daemon.conf
-mkdir -p /usr/local/bin
-cp -f autopair/{auto-agent,autopair,bluezutils.py,BtAutoPair.py,testAutoPair.py} /usr/local/bin/
-chmod +x /usr/local/bin/auto-agent
-chmod +x /usr/local/bin/autopair
-chown -R root:root /usr/local/bin/
-tee /etc/systemd/system/autopair.service <<EOF
+sudo sed -i '/#Name = BlueZ/a Enable=Source,Sink,Media' /etc/bluetooth/main.conf
+sudo sed -i 's/#Class = 0x000100/Class = 0x00041C/g' /etc/bluetooth/main.conf
+sudo sed -i 's/#DiscoverableTimeout = 0/DiscoverableTimeout = 0/g' /etc/bluetooth/main.conf
+sudo sed -i 's/#PairableTimeout = 0/PairableTimeout = 0/g' /etc/bluetooth/main.conf
+sudo sed -i 's/; resample-method = speex-float-1/resample-method = trivial/g' /etc/pulse/daemon.conf
+sudo mkdir -p /usr/local/bin
+sudo cp -f autopair/{auto-agent,autopair,bluezutils.py,BtAutoPair.py,testAutoPair.py} /usr/local/bin/
+sudo chmod +x /usr/local/bin/auto-agent
+sudo chmod +x /usr/local/bin/autopair
+sudo chown -R root:root /usr/local/bin/
+sudo tee /etc/systemd/system/autopair.service <<EOF
 [Unit]
 Description=Auto Pair
 Requires=bluetooth.service
 After=bluetooth.service
 Before=rc-local.service
 ConditionPathExists=/usr/local/bin/autopair
-
 [Service]
 ExecStart=/usr/local/bin/autopair > /dev/null 2>&1
 RemainAfterExit=yes
-
 [Install]
 WantedBy=multi-user.target
 EOF
-systemctl enable autopair
-systemctl start autopair
+sudo systemctl enable autopair
+sudo systemctl start autopair
 }
 
 # Disable HDMI Audio Overlay
 audio_overlay(){
-if [[ `dmesg | grep -w "Raspberry\ Pi"` ]]; then
-	mkdir -p /etc/initramfs/post-update.d/
-	cp -f audio/98-overlay /etc/initramfs/post-update.d/
-	chmod +x /etc/initramfs/post-update.d/98-overlay
-	chown root:root /etc/initramfs/post-update.d/98-overlay
-	/etc/initramfs/post-update.d/98-overlay
+if [[ `sudo dmesg | grep -w "Raspberry\ Pi"` ]]; then
+	sudo mkdir -p /etc/initramfs/post-update.d/
+	sudo cp -f audio/98-overlay /etc/initramfs/post-update.d/
+	sudo chmod +x /etc/initramfs/post-update.d/98-overlay
+	sudo chown root:root /etc/initramfs/post-update.d/98-overlay
+	sudo /etc/initramfs/post-update.d/98-overlay
 fi
 }
 
@@ -162,14 +154,14 @@ echo export PATH="$PATH" >> ~/.bashrc
 echo "and execute: start"
 echo ""
 sleep 1s
-if [[ `dmesg | grep -w "Raspberry\ Pi"` ]]; then
+if [[ `sudo dmesg | grep -w "Raspberry\ Pi"` ]]; then
 	echo "To disable HDMI audio, add the following to the /boot/config.txt file"
 	echo ""
 	echo "dtoverlay=disable-hdmi-audio"
 fi
 echo -e "${FIN}"
 cd ~
-rm -fdr ~/musicbox
+sudo rm -fdr ~/musicbox
 }
 
 echo ""
@@ -179,14 +171,14 @@ echo ""
 
 echo -e "${WHT}Starting install ...${FIN}"
 sleep 2s
-apt update
-apt upgrade -y
+sudo apt update
+sudo apt upgrade -y
 if [[ `command -v make` ]]; then
 	:;
 else
-	apt install -y make;
+	sudo apt install -y make;
 fi
-apt install -y ${DEPENDS}
+sudo apt install -y ${DEPENDS}
 echo ""
 install_pianobar
 echo ""
